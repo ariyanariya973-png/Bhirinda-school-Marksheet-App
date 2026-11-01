@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>স্কুল মার্কশিট ম্যানেজার</title>
+<style>
+:root{--navy:#12345a;--blue:#1769aa;--pale:#eef5fb;--line:#d7e0e8;--green:#16834a;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:#f3f6f9;color:#182533;font-family:"Noto Sans Bengali","SolaimanLipi",Arial,sans-serif}
+header{background:linear-gradient(120deg,#12345a,#1769aa);color:white;padding:22px 4%;}header h1{margin:0 0 6px;font-size:25px}header p{margin:0;opacity:.9}
+main{max-width:1200px;margin:22px auto;padding:0 14px}.panel{background:white;border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 2px 8px #152b3d0a}
+h2{font-size:19px;color:var(--navy);margin:0 0 14px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+label{display:block;font-size:14px;font-weight:600;margin-bottom:5px}input,select{width:100%;padding:10px;border:1px solid #c8d3dd;border-radius:7px;font:inherit;background:white}
+button{border:0;border-radius:7px;padding:10px 15px;font:inherit;font-weight:600;cursor:pointer;background:var(--blue);color:white;margin:4px 3px 4px 0}
+button.secondary{background:#526579}button.green{background:var(--green)}button.danger{background:var(--red)}button.light{background:#e8f1f8;color:var(--navy)}
+table{border-collapse:collapse;width:100%;min-width:700px}th,td{border:1px solid var(--line);padding:8px;text-align:center}th{background:var(--pale);color:var(--navy)}td input{min-width:65px;padding:7px}
+.tablewrap{overflow-x:auto}.muted{color:#617080;font-size:13px}.actions{display:flex;flex-wrap:wrap;gap:4px;margin-top:12px}
+#records td{font-size:14px}.pill{display:inline-block;padding:3px 8px;border-radius:20px;background:#e9f5ed;color:#17683a;font-weight:700}
+#marksheet{display:none;background:white;color:#111;padding:22px;max-width:900px;margin:18px auto;border:1px solid #bbb}
+#marksheet h2,#marksheet h3{text-align:center;color:#111;margin:5px}#marksheet .school{text-align:center;border-bottom:2px solid #222;padding-bottom:10px;margin-bottom:12px}
+.info{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:12px 0}.resultbox{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0}.resultbox div{border:1px solid #555;padding:8px 12px;flex:1;min-width:120px}
+.signatures{display:flex;justify-content:space-between;margin-top:55px}.signatures span{border-top:1px solid #222;padding-top:5px;min-width:130px;text-align:center}
+footer{text-align:center;color:#687887;font-size:12px;padding:20px}
+@media print{body{background:white}header,main>.panel,.noprint,footer{display:none!important}#marksheet{display:block!important;border:0;margin:0;padding:8mm;max-width:none}#marksheet table{min-width:0;font-size:12px}#marksheet th,#marksheet td{padding:5px}.signatures{margin-top:45px}@page{size:A4;margin:12mm}}
+@media(max-width:600px){header h1{font-size:20px}.panel{padding:13px}.info{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><h1>স্কুল মার্কশিট ম্যানেজার</h1><p>প্রথম শ্রেণি থেকে দশম শ্রেণি • নম্বর, গ্রেড, GPA, মেধাতালিকা, সংরক্ষণ ও প্রিন্ট</p></header>
+<main>
+<section class="panel">
+<h2>১. প্রতিষ্ঠানের তথ্য</h2>
+<div class="grid">
+<div><label>স্কুলের নাম</label><input id="school" value="ভিরিন্দা উচ্চ বালিকা বিদ্যালয়" placeholder="স্কুলের নাম লিখুন"></div>
+<div><label>ঠিকানা</label><input id="address" value="সান্তানপাড়া, পলাশ, নরসিংদী" placeholder="স্কুলের ঠিকানা"></div>
+<div><label>পরীক্ষার ধরন</label><select id="assessment">
+<option value="সাপ্তাহিক পরীক্ষা">সাপ্তাহিক পরীক্ষা</option>
+<option value="সাময়িক পরীক্ষা">সাময়িক পরীক্ষা</option>
+<option value="অর্ধবার্ষিক পরীক্ষা" selected>অর্ধবার্ষিক পরীক্ষা</option>
+<option value="বার্ষিক পরীক্ষা">বার্ষিক পরীক্ষা</option>
+<option value="প্রাক-নির্বাচনী পরীক্ষা">প্রাক-নির্বাচনী পরীক্ষা</option>
+<option value="নির্বাচনী পরীক্ষা">নির্বাচনী পরীক্ষা</option>
+<option value="অন্যান্য">অন্যান্য</option>
+</select></div>
+<input id="exam" type="hidden" value="">
+<div><label>শিক্ষাবর্ষ</label><input id="year" value="২০২৬"></div>
+</div>
+</section>
+<section class="panel">
+<h2>২. শিক্ষার্থীর তথ্য</h2>
+<div class="grid">
+<div><label>শ্রেণি</label><select id="className"><option value="">শ্রেণি নির্বাচন</option><option>প্রথম</option><option>দ্বিতীয়</option><option>তৃতীয়</option><option>চতুর্থ</option><option>পঞ্চম</option><option>ষষ্ঠ</option><option>সপ্তম</option><option>অষ্টম</option><option>নবম</option><option>দশম</option></select></div>
+<div><label>শাখা</label><input id="section" placeholder="যেমন: ক"></div>
+<div><label>শিক্ষার্থীর নাম</label><input id="student" placeholder="পূর্ণ নাম"></div>
+<div><label>রোল নম্বর</label><input id="roll" type="number" min="1" placeholder="রোল"></div>
+<div><label>পিতার নাম</label><input id="father" placeholder="পিতার নাম"></div>
+<div><label>মাতার নাম</label><input id="mother" placeholder="মাতার নাম"></div>
+<div><label>শিক্ষার্থীর আইডি (ঐচ্ছিক)</label><input id="sid" placeholder="আইডি"></div>
+</div>
+</section>
+<section class="panel">
+<h2>৩. বিষয় ও নম্বর</h2>
+<p class="muted">প্রতিটি বিষয়ের পূর্ণমান প্রয়োজন অনুযায়ী লিখুন। যে অংশ নেই, সেখানে ০ দিন। প্রাপ্ত নম্বর পূর্ণমানের বেশি দেওয়া যাবে না।</p>
+<div class="tablewrap"><table id="subjectTable"><thead><tr><th>বিষয়ের নাম</th><th>সৃজনশীল</th><th>নৈর্ব্যক্তিক</th><th>ব্যবহারিক</th><th>পূর্ণমান</th><th>মোট</th><th>গ্রেড</th><th>GPA</th><th class="noprint">মুছুন</th></tr></thead><tbody id="subjects"></tbody></table></div>
+<div class="actions noprint"><button class="light" onclick="addSubject()">+ বিষয় যোগ করুন</button><button class="secondary" onclick="loadSample()">নমুনা বিষয়</button></div>
+</section>
+<section class="panel noprint">
+<h2>৪. হিসাব ও সংরক্ষণ</h2>
+<div class="actions">
+<button class="green" onclick="saveStudent()">মার্কশিট সংরক্ষণ</button>
+<button onclick="previewCurrent()">মার্কশিট দেখুন</button>
+<button class="secondary" onclick="clearForm()">নতুন শিক্ষার্থী</button>
+<button class="light" onclick="window.print()">প্রিন্ট</button>
+</div>
+<p class="muted">সংরক্ষিত তথ্য এই ব্রাউজারের Local Storage-এ থাকবে। একই ডিভাইস ও ব্রাউজার ব্যবহার করুন। ব্রাউজারের ডেটা মুছে ফেললে সংরক্ষিত তথ্য হারাতে পারে।</p>
+</section>
+<section class="panel noprint">
+<h2>৫. সংরক্ষিত মার্কশিট ও মেধাতালিকা</h2>
+<div class="grid">
+<div><label>শ্রেণি অনুযায়ী দেখুন</label><select id="filterClass" onchange="renderRecords()"><option value="">সব শ্রেণি</option><option>প্রথম</option><option>দ্বিতীয়</option><option>তৃতীয়</option><option>চতুর্থ</option><option>পঞ্চম</option><option>ষষ্ঠ</option><option>সপ্তম</option><option>অষ্টম</option><option>নবম</option><option>দশম</option></select></div>
+<div><label>নাম</label><input id="filterExam" placeholder="ফিল্টার (ঐচ্ছিক)" oninput="renderRecords()"></div>
+</div>
+<div class="tablewrap" style="margin-top:12px"><table id="records"><thead><tr><th>রোল</th><th>নাম</th><th>শ্রেণি</th><th>মোট নম্বর</th><th>GPA</th><th>গ্রেড</th><th>মেধাক্রম</th><th>কাজ</th></tr></thead><tbody id="recordRows"></tbody></table></div>
+<div class="actions"><button class="secondary" onclick="printMerit()">মেধাতালিকা প্রিন্ট</button><button class="light" onclick="exportCSV()">CSV ডাউনলোড</button></div>
+</section>
+</main>
+<div id="marksheet">
+<div class="school"><h2 id="pSchool">বিদ্যালয়ের নাম</h2><div id="pAddress"></div><h3 id="pExam"></h3><strong>শিক্ষার্থীর একাডেমিক মার্কশিট</strong></div>
+<div class="info" id="pInfo"></div>
+<table><thead><tr><th>ক্রম</th><th>বিষয়</th><th>সৃজনশীল</th><th>নৈর্ব্যক্তিক</th><th>ব্যবহারিক</th><th>মোট</th><th>গ্রেড</th><th>GPA</th></tr></thead><tbody id="pSubjects"></tbody></table>
+<div class="resultbox" id="pSummary"></div>
+<div class="signatures"><span>শ্রেণি শিক্ষকের স্বাক্ষর</span><span>প্রধান শিক্ষকের স্বাক্ষর</span><span>অভিভাবকের স্বাক্ষর</span></div>
+</div>
+<footer>স্কুল মার্কশিট ম্যানেজার • ফলাফল তৈরির আগে নম্বর ও গ্রেড যাচাই করুন</footer>
+<script>
+const $=id=>document.getElementById(id);
+let records=JSON.parse(localStorage.getItem('school_marks_records')||'[]'), editingId=null, currentPreview=null;
+const bnDigits=n=>String(n).replace(/\d/g,d=>'০১২৩৪৫৬৭৮৯'[d]);
+function grade(m,total){if(total<=0)return {g:'—',p:0};let x=m/total*100;if(x>=80)return{g:'A+',p:5};if(x>=70)return{g:'A',p:4};if(x>=60)return{g:'A-',p:3.5};if(x>=50)return{g:'B',p:3};if(x>=40)return{g:'C',p:2};if(x>=33)return{g:'D',p:1};return{g:'F',p:0}}
+function addSubject(name='',cq=0,mcq=0,pr=0,max=100){let tr=document.createElement('tr');tr.innerHTML=`<td><input class="subname" placeholder="বিষয়ের নাম" value="${name}"></td><td><input class="cq" type="number" min="0" value="${cq}"></td><td><input class="mcq" type="number" min="0" value="${mcq}"></td><td><input class="pr" type="number" min="0" value="${pr}"></td><td><input class="max" type="number" min="1" value="${max}"></td><td class="total">0</td><td class="grade">—</td><td class="gpa">0</td><td class="noprint"><button class="danger" onclick="this.closest('tr').remove();calculate()">×</button></td>`;$('subjects').appendChild(tr);tr.querySelectorAll('input').forEach(i=>i.addEventListener('input',calculate));calculate()}
+function loadSample(){if($('subjects').children.length)return;['বাংলা','ইংরেজি','গণিত','বিজ্ঞান','বাংলাদেশ ও বিশ্বপরিচয়'].forEach(n=>addSubject(n,0,0,0,100))}
+function getSubjects(){let arr=[];[...$('subjects').rows].forEach(r=>{let v=c=>Number(r.querySelector('.'+c).value)||0;let name=r.querySelector('.subname').value.trim(),cq=v('cq'),mcq=v('mcq'),pr=v('pr'),max=v('max'),total=cq+mcq+pr,g=grade(total,max);arr.push({name,cq,mcq,pr,max,total,grade:g.g,gpa:g.p})});return arr}
+function calculate(){[...$('subjects').rows].forEach(r=>{let v=c=>Number(r.querySelector('.'+c).value)||0;let t=v('cq')+v('mcq')+v('pr'),m=v('max'),g=grade(t,m);r.querySelector('.total').textContent=t;r.querySelector('.grade').textContent=g.g;r.querySelector('.gpa').textContent=g.p})}
+function studentData(){let subs=getSubjects();if(!$('student').value.trim()||!$('className').value||!$('roll').value)throw Error('শ্রেণি, শিক্ষার্থীর নাম ও রোল নম্বর পূরণ করুন।');if(!subs.length||subs.some(s=>!s.name||s.max<=0))throw Error('প্রতিটি বিষয়ের নাম ও পূর্ণমান দিন।');if(subs.some(s=>s.cq+s.mcq+s.pr>s.max))throw Error('কোনো বিষয়ের প্রাপ্ত নম্বর পূর্ণমানের বেশি হয়েছে।');let total=subs.reduce((a,s)=>a+s.total,0),max=subs.reduce((a,s)=>a+s.max,0),failed=subs.some(s=>s.grade==='F'),gpa=failed?0:subs.reduce((a,s)=>a+s.gpa,0)/subs.length;return{id:editingId||Date.now(),school:$('school').value,address:$('address').value,exam:$('exam').value,assessment:$('assessment').value,year:$('year').value,className:$('className').value,section:$('section').value,student:$('student').value.trim(),roll:$('roll').value,father:$('father').value,mother:$('mother').value,sid:$('sid').value,subjects:subs,total,max,gpa:Number(gpa.toFixed(2)),grade:failed?'F':grade(gpa*20,100).g,passed:!failed}}
+function meritList(){let list=records.slice().sort((a,b)=>a.className.localeCompare(b.className,'bn')||b.gpa-a.gpa||b.total-a.total||Number(a.roll)-Number(b.roll));let rank=0,last='';list.forEach((r,i)=>{let key=r.className+'|'+r.exam;if(key!==last){rank=0;last=key}if(r.passed){rank++;r.rank=rank}else r.rank='—'});return list}
+function saveStudent(){try{let d=studentData();let idx=records.findIndex(x=>x.id===d.id);if(idx>=0)records[idx]=d;else records.push(d);localStorage.setItem('school_marks_records',JSON.stringify(records));editingId=null;renderRecords();showMarksheet(d);alert('মার্কশিট সংরক্ষণ হয়েছে।')}catch(e){alert(e.message)}}
+function showMarksheet(d){currentPreview=d;$('pSchool').textContent=d.school||'বিদ্যালয়ের নাম';$('pAddress').textContent=d.address||'';$('pExam').textContent=(d.assessment||'পরীক্ষা')+' | '+(d.exam||'পরীক্ষা')+' — '+(d.year||'');$('pInfo').innerHTML=`<div><b>শিক্ষার্থীর নাম:</b> ${esc(d.student)}</div><div><b>শ্রেণি:</b> ${esc(d.className)} ${esc(d.section||'')}</div><div><b>রোল:</b> ${esc(d.roll)}</div><div><b>শিক্ষার্থী আইডি:</b> ${esc(d.sid||'—')}</div><div><b>পিতার নাম:</b> ${esc(d.father||'—')}</div><div><b>মাতার নাম:</b> ${esc(d.mother||'—')}</div>`;$('pSubjects').innerHTML=d.subjects.map((s,i)=>`<tr><td>${i+1}</td><td>${esc(s.name)}</td><td>${s.cq}</td><td>${s.mcq}</td><td>${s.pr}</td><td>${s.total}/${s.max}</td><td>${s.grade}</td><td>${s.gpa}</td></tr>`).join('');let all=meritList().find(x=>x.id===d.id);$('pSummary').innerHTML=`<div><b>মোট নম্বর</b><br>${d.total} / ${d.max}</div><div><b>সামগ্রিক গ্রেড</b><br>${d.grade}</div><div><b>GPA</b><br>${d.gpa.toFixed(2)}</div><div><b>ফলাফল</b><br>${d.passed?'উত্তীর্ণ':'অনুত্তীর্ণ'}</div><div><b>মেধাক্রম</b><br>${all?.rank||'—'}</div>`;$('marksheet').style.display='block';$('marksheet').scrollIntoView({behavior:'smooth'})}
+function previewCurrent(){try{showMarksheet(studentData())}catch(e){alert(e.message)}}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderRecords(){let list=meritList(),cl=$('filterClass').value,ex=$('filterExam').value.toLowerCase();list=list.filter(r=>(!cl||r.className===cl)&&(!ex||(r.exam||'').toLowerCase().includes(ex)));$('recordRows').innerHTML=list.map(r=>`<tr><td>${esc(r.roll)}</td><td>${esc(r.student)}</td><td>${esc(r.className)}</td><td>${r.total}/${r.max}</td><td>${r.gpa.toFixed(2)}</td><td>${r.grade}</td><td>${r.rank}</td><td><button class="light" onclick="viewRecord(${r.id})">দেখুন</button><button class="secondary" onclick="editRecord(${r.id})">সম্পাদনা</button><button class="danger" onclick="deleteRecord(${r.id})">মুছুন</button></td></tr>`).join('')||'<tr><td colspan="8">কোনো রেকর্ড পাওয়া যায়নি</td></tr>'}
+function viewRecord(id){let d=records.find(r=>r.id===id);if(d)showMarksheet(d)}
+function editRecord(id){let d=records.find(r=>r.id===id);if(!d)return;editingId=id;['school','address','exam','year','className','section','student','roll','father','mother','sid'].forEach(k=>$(k).value=d[k]||'');$('assessment').value=d.assessment||'অর্ধবার্ষিক পরীক্ষা';$('subjects').innerHTML='';d.subjects.forEach(s=>addSubject(s.name,s.cq,s.mcq,s.pr,s.max));window.scrollTo({top:0,behavior:'smooth'})}
+function deleteRecord(id){if(confirm('এই মার্কশিটটি মুছে ফেলবেন?')){records=records.filter(r=>r.id!==id);localStorage.setItem('school_marks_records',JSON.stringify(records));renderRecords()}}
+function clearForm(){editingId=null;['className','section','student','roll','father','mother','sid'].forEach(k=>$(k).value='');$('subjects').innerHTML='';$('marksheet').style.display='none';addSubject()}
+function printMerit(){let list=meritList().filter(r=>!$('filterClass').value||r.className===$('filterClass').value);let w=window.open('','_blank');if(!w){alert('পপ-আপ অনুমতি দিন।');return}w.document.write(`<html lang="bn"><meta charset="utf-8"><title>মেধাতালিকা</title><style>body{font-family:Arial,sans-serif;padding:20px}h2,p{text-align:center}table{border-collapse:collapse;width:100%}td,th{border:1px solid #555;padding:7px;text-align:center}th{background:#eee}</style><h2>${esc($('school').value||'বিদ্যালয়')}</h2><p>${esc($('exam').value||'পরীক্ষা')} — মেধাতালিকা</p><table><tr><th>মেধাক্রম</th><th>রোল</th><th>নাম</th><th>শ্রেণি</th><th>মোট</th><th>GPA</th><th>গ্রেড</th></tr>${list.map(r=>`<tr><td>${r.rank}</td><td>${esc(r.roll)}</td><td>${esc(r.student)}</td><td>${esc(r.className)}</td><td>${r.total}/${r.max}</td><td>${r.gpa.toFixed(2)}</td><td>${r.grade}</td></tr>`).join('')}</table><script>window.print()<\/script></html>`);w.document.close()}
+function exportCSV(){let rows=[['শ্রেণি','রোল','নাম','পরীক্ষা','মোট','পূর্ণমান','গ্রেড','GPA','মেধাক্রম']];meritList().forEach(r=>rows.push([r.className,r.roll,r.student,r.exam,r.total,r.max,r.grade,r.gpa,r.rank]));let csv='\ufeff'+rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download='school-marksheets.csv';a.click();URL.revokeObjectURL(a.href)}
+loadSample();renderRecords();
+</script>
+</body></html>
